@@ -27,23 +27,26 @@ $Version = "1.4"
         "2) Check for suspicious Services [BETA]"
         "3) Some general infos about your PC"
         "4) Configure Start-up folder"
+        "5) Remove Cortana"
     ""
     
-    "If you don't enter 1, 2, 3 or 4 the script will close itself"
+    "If you don't enter a number the script will close itself"
     ""
    
-    $MenuSelection = Read-Host "Enter 1,2,3,4 or 5"
+    $MenuSelection = Read-Host "Enter a number"
 
     switch -Wildcard($MenuSelection) {
 
         '*Error*'
         {
-            Write-Error "Oops that should'nt be happen"
+            Write-Host -ForegroundColor Red "Fatal error: that should not happen, please report this bug to the developer"
             Add-Content -Path $LogFile -Value "Error in switch function"
             StartCode 
         } 
 
         1 { 
+            ""
+            "Deleting temp files..."
             Add-Content -Path $LogFile -Value "$(Get-Date) Deleting \Windows\Temp\ Content..."
             Remove-Item $windir'\Windows\Temp\*' -Recurse -ErrorAction SilentlyContinue 
             Add-Content -Path $LogFile -Value "$(Get-Date) Finished Deleting \Windows\Temp\ Content"
@@ -54,7 +57,7 @@ $Version = "1.4"
             Add-Content -Path $LogFile -Value "$(Get-Date) Finished Deleting \AppData\Local\Temp\ Content"
     
             ""
-            "This files cannot be removed:"
+            Write-Host -ForegroundColor Yellow "(!) This following files cannot be removed:"
             Get-ChildItem $windir'\Windows\Temp\*'
             Get-ChildItem $HOME'\AppData\Local\Temp\*'
             ""
@@ -67,26 +70,28 @@ $Version = "1.4"
         } 
         2 { 
             Add-Content -Path $LogFile -Value "$(Get-Date) Checking for suspicious services..."
-            $Test = Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object -Property "Name" | Select-String -pattern "*emote*" 
+            $Test = Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object -Property "Name" | Select-String -pattern "emote" 
            
             If ($Test -ne $null)
             {
-                "Warning $Test is suspicious"
+                Write-Host -ForegroundColor Yellow "(!) $Test is suspicious, please check this service"
                 Add-Content -Path $LogFile -Value "$(Get-Date) $Test is suspicious"
             }
             Else
             {
-                "Nice, no suspicious services have been found!"
+                Write-Host -ForegroundColor Green "(✓) No suspicious services have been found!"
                 Add-Content -Path $LogFile -Value "$(Get-Date) Suspicious Service check result: 0"
             }
-          
+            ""
             Read-Host "Press Enter to continue"
             StartCode
         }
         3 { 
             Add-Content -Path $LogFile -Value "$(Get-Date) Showing up some general information..."
             "Loading..."
+
             Get-ComputerInfo 
+        
             ""
             Add-Content -Path $LogFile -Value "$(Get-Date) Finished showing up some general information"
             ""
@@ -102,12 +107,21 @@ $Version = "1.4"
                 "Copying..."
                 ""
                 Copy-Item $inputfile ("$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")
-                "Successfully copied files!"
+                ""
+                 Write-Host -ForegroundColor Green "(✓) Successfully copied files!"
+                 ""
+                 $a = Read-Host "Do you want to open the start-up folder? y/n"
+
+                 if($a -eq "y" -or $a -eq "yes")
+                 {
+                        explorer 'C:\Users\DLIri\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
+                 }
+
             }
             catch{
                 Add-Content -Path $LogFile -Value "$(Get-Date) An error occured during the process"
                 ""
-                "An error occured during the process, aborting..."
+                Write-Host -ForegroundColor Red "(-) An error occured during the process, aborting..."
             }
             ""
             Get-ChildItem -Path "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
@@ -116,15 +130,19 @@ $Version = "1.4"
             StartCode
         }
         5{
+             Add-Content -Path $LogFile -Value "$(Get-Date) Disabling Cortana..."
             try{
-                    Add-Content -Path $LogFile -Value "$(Get-Date) Disabling Cortana..."
-                    Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppxPackage
-                    Add-Content -Path $LogFile -Value "$(Get-Date) Fins"
+                    Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppPackage
+                    Add-Content -Path $LogFile -Value "$(Get-Date) Removed Cortana"
+                    ""
+                    Write-Host -ForegroundColor Green "(✓) successfully removed Cortana"
 
             }
             catch{
-            
+                    Add-Content -Path $LogFile -Value "$(Get-Date) Error: Cortana could not get removed. Aborting..."
+                    Write-Host -ForegroundColor Red "(-) Cortana could not get removed. Aborting..."
             }
+                ""
                 Read-Host "Press Enter to continue"
                 StartCode
         
@@ -161,7 +179,7 @@ Clear-Host
 Add-Type -AssemblyName System.Windows.Forms
 $host.ui.RawUI.WindowTitle = “Dylan's PowerShell Script”
 
-"Welcome $env:UserName and welcome to Dylan's PowerShell Script Version $Version (25.03.2022)"
+"Welcome $env:UserName and welcome to Dylan's PowerShell Script Version $Version (15.05.2022)"
 
 #Window Alert
 $msgBoxInput =  [System.Windows.Forms.MessageBox]::Show('!WARNING! This script is still early access, bugs and failures may occur during the execution of the script, would you like to continue?','Dylans PowerShell Script WARNING','YesNoCancel','Error')
@@ -187,4 +205,6 @@ $msgBoxInput =  [System.Windows.Forms.MessageBox]::Show('!WARNING! This script i
   }
   
   }
+#---------------------------------------------------------------------------------------------
 
+## .exe Deployement:  ps2exe "C:\Users\DLIri\Desktop\Dev\PowerShell\Dylans_PS_Script\Dylans_PS_Script.ps1" "C:\Users\DLIri\Desktop\Dev\PowerShell\Dylans_PS_Script\Dylans_PS_Script.exe"
