@@ -3,19 +3,30 @@
 	<meta charset="UTF-8"/>
 	<title>RIDY01</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 	<header>
-		<h1 style=""> Dylans PowerShell Script Website</h1>
+		<h1> Dylans PowerShell Script Website</h1>
 	</header>
 	<main>
-		<marquee direction="right"
-				 behavior="alternate"
-				 style="color:white;">
+		<marquee direction="right" behavior="alternate">
 			<span><b><p>Check my github: <a href="https://github.com/RIDY01/" target="_blank">RIDY01</a></p></b></span>
 		</marquee>
+
 		<div id="mainContainer">
-			<p> Coming soon... <img src="https://media4.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif?cid=790b761145989918d77109a2eff81401a22fbe5577b62085&rid=giphy.gif&ct=s" height="25px" width="25px"/> </p>
+			<div class="containerContent">
+				<h2>Version 1.5: <button class="btn"><i class="fa fa-download"></i> <a href="https://github.com/RIDY01/DylansPowerShellScript/raw/main/Dylans_PS_Script1.5.exe" download>Download</a></button></h2>
+				<div id="changelogsContainer">
+					<br>
+					<h3>Changelogs:</h3>
+						<p style="color: lawngreen">	(+) Cortana is now removable</p>
+						<p style="color: lawngreen">	(+) You can choose if you want to open the start-up folder</p>
+						<p style="color: lawngreen">	(+) Color messages help now to recognise the issue</p>
+						<p style="color:yellow;">	(!) Bug fixes</p>
+						<p style="color:red;">		(-) Cortana Package cannot always be removed causing windows builds</p>
+				</div>
+			</div>
 		</div>
 	</main>
 	<footer>
@@ -27,11 +38,19 @@
 			margin: 0;
 			background-size: cover;
 			background-image: url("https://giffiles.alphacoders.com/209/209037.gif");
-			/*background-image: url("https://i.pinimg.com/originals/62/c9/3a/62c93a4cf6462f54fdea6d735d927f9c.gif");*/
 			background-repeat: no-repeat;
 			font-family: Arial, Helvetica, sans-serif;
-
 		}
+
+		h1 {
+			font-size: 15pt;
+		}
+		@media screen and (min-width: 1600px) {
+			h1 {
+				font-size: 20pt;
+			}
+		}
+
 
 		header{
 			background-image: linear-gradient(180deg, #4e9c5e, green, black);
@@ -42,18 +61,48 @@
 			top:0;
 		}
 
+		marquee{
+			color: white;
+			width: 100vh;
+			height: 5vh;
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
 		#mainContainer{
 			background-color:black;
 			color: white;
-			margin:10vh auto auto auto;
+			margin:5vh auto auto auto;
 			max-width: 75%;
 			height: 60vh;
-			text-align: center;
 			border: 1px solid green;
 			overflow-y: auto;
 			border-radius: 25px;
 		}
-		
+
+		.containerContent h2{
+			text-align: center;
+		}
+
+		#changelogsContainer{
+			margin: auto;
+			width: 30vw;
+		}
+
+		.btn {
+			background-color: green;
+			border: none;
+			color: white;
+			padding: 1vh 2vw;
+			cursor: pointer;
+			font-size: 20px;
+			border-radius: 25px;
+		}
+
+		.btn a {
+			text-decoration: none;
+			color: white;
+		}
 		footer{
 			bottom: 0;
 			margin: 0;
