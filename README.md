@@ -1,6 +1,3 @@
-# DylansPowerShellScript
-Dylans PowerShell Script 
-
 # Tutorial
 
 Open DylansPS_Script_VX.X.exe as administrator
