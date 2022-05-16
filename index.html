@@ -2,38 +2,74 @@
 <head>
 	<meta charset="UTF-8"/>
 	<title>RIDY01</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-	<h1 style="margin:auto; text-align:center; background-color:green; top:0"> Dylans PowerShell Script Website</h1>
-	<div id="mainContainer">
-		<p> Coming soon... <img src="https://media4.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif?cid=790b761145989918d77109a2eff81401a22fbe5577b62085&rid=giphy.gif&ct=s" height="25px" width="25px"/> </p>
-	</div>
+	<header>
+		<h1 style=""> Dylans PowerShell Script Website</h1>
+	</header>
+	<main>
+		<marquee direction="right"
+				 behavior="alternate"
+				 style="color:white;">
+			<span><b><p>Check my github: <a href="https://github.com/RIDY01/" target="_blank">RIDY01</a></p></b></span>
+		</marquee>
+		<div id="mainContainer">
+			<p> Coming soon... <img src="https://media4.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif?cid=790b761145989918d77109a2eff81401a22fbe5577b62085&rid=giphy.gif&ct=s" height="25px" width="25px"/> </p>
+		</div>
+	</main>
 	<footer>
-		<p> Made by RIDY01 </p>
+		<span><b><p>Made by <a href="https://github.com/RIDY01/" target="_blank">RIDY01</a></p></b></span>
 	</footer>
 	<style>
+
 		body{
 			margin: 0;
-			  background-image: url("https://i.pinimg.com/originals/62/c9/3a/62c93a4cf6462f54fdea6d735d927f9c.gif");
+			background-size: cover;
+			background-image: url("https://giffiles.alphacoders.com/209/209037.gif");
+			/*background-image: url("https://i.pinimg.com/originals/62/c9/3a/62c93a4cf6462f54fdea6d735d927f9c.gif");*/
+			background-repeat: no-repeat;
+			font-family: Arial, Helvetica, sans-serif;
+
+		}
+
+		header{
+			background-image: linear-gradient(180deg, #4e9c5e, green, black);
+			height: 10vh;
+			line-height: 10vh;
+			margin:auto;
+			text-align:center;
+			top:0;
 		}
 
 		#mainContainer{
 			background-color:black;
 			color: white;
-			margin:1% auto auto auto;
-			width: 30%;
-			height: 50%;
+			margin:10vh auto auto auto;
+			max-width: 75%;
+			height: 60vh;
 			text-align: center;
 			border: 1px solid green;
+			overflow-y: auto;
+			border-radius: 25px;
 		}
 		
 		footer{
 			bottom: 0;
+			margin: 0;
 			width: 100%;
-			text-align: center;
+			height: 8vh;
+			line-height: 8vh;
 			position: fixed;
-			background-color: green;
+			text-align: center;
+			background-image: linear-gradient(180deg, black, green, #2c5c36);
 		}
+		footer p{
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+		}
+
 	</style>
 </body>
 </html>
