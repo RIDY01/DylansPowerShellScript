@@ -5,9 +5,11 @@ The source code is and will always be public and open to everyone.
 
 # Tutorial
 
-Open DylansPS_Script_VX.X.exe as administrator
+  1) Open DylansPS_Script_VX.X.exe as administrator.
+  
+  2) Allow this program when the antivirus assumes that it is a virus (This is because the executable file is not signed) or just open the .ps1 file with powershell.
 
-Log File can be found in your Documents path.
+  3) Log File can be found in your Documents path so  if an error occurs just check this .txt file. (C:\Users\USERNAME\Documents\Dylanlogs)
 
 # Website
 
