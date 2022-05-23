@@ -1,6 +1,6 @@
 # Usage
 
-This script is like a tool program for windows (10), you can delete temp files, adding files to your start up folder etc. just by using this script. 
+This script is like a tool program for windows (10), you can delete temp files, adding files to your start up folder etc. just by executing this script. 
 
 # Tutorial
 
