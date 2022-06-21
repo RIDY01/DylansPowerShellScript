@@ -6,7 +6,8 @@ New-Item -ItemType "file" $HOME"\Documents\Dylanlogs\log.txt" -ErrorAction Silen
 
 #Variables------------------------------------------------------------------------------------
 $LogFile = $HOME + "\Documents\Dylanlogs\log.txt"
-$Version = "1.5"
+$Version = "1.7"
+$date = "21/06/2022"
 #---------------------------------------------------------------------------------------------
 
 #Functions------------------------------------------------------------------------------------
@@ -24,10 +25,11 @@ $Version = "1.5"
       "Version: $Version"
     ""
         "1) Delete temp files" 
-        "2) Check for suspicious Services [BETA]"
+        "2) Check for suspicious activities"
         "3) Some general infos about your PC"
         "4) Configure Start-up folder"
         "5) Remove Cortana"
+        "6) Gaming tweaks"
     ""
     
     "If you don't enter a number the script will close itself"
@@ -69,6 +71,7 @@ $Version = "1.5"
             StartCode
         } 
         2 { 
+            ""
             Add-Content -Path $LogFile -Value "$(Get-Date) Checking for suspicious services..."
             $Test = Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object -Property "Name" | Select-String -pattern "emote" 
            
@@ -83,10 +86,18 @@ $Version = "1.5"
                 Add-Content -Path $LogFile -Value "$(Get-Date) Suspicious Service check result: 0"
             }
             ""
+            "Query user:" 
+            query user /server:$SERVER
+            ""
+            "netstat:" 
+            netstat -b
+         
+            ""
             Read-Host "Press Enter to continue"
             StartCode
         }
         3 { 
+            ""
             Add-Content -Path $LogFile -Value "$(Get-Date) Showing up some general information..."
             "Loading..."
 
@@ -99,6 +110,7 @@ $Version = "1.5"
             StartCode
         }
         4 { 
+            ""
             Add-Content -Path $LogFile -Value "$(Get-Date) Adding files via prompt..."
             $inputfile = Get-FileName $env:HOMEPATH
             try {
@@ -130,7 +142,8 @@ $Version = "1.5"
             StartCode
         }
         5{
-             Add-Content -Path $LogFile -Value "$(Get-Date) Disabling Cortana..."
+            ""
+            Add-Content -Path $LogFile -Value "$(Get-Date) Disabling Cortana..."
             try{
                     Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppPackage
                     Add-Content -Path $LogFile -Value "$(Get-Date) Removed Cortana"
@@ -146,6 +159,32 @@ $Version = "1.5"
                 Read-Host "Press Enter to continue"
                 StartCode
         
+        }
+        6{
+           ""
+           Add-Content -Path $LogFile -Value "$(Get-Date) Applying Gaming tweaks..."
+           try{
+                ""
+                Write-Host "Registry setting..."
+                Add-Content -Path $LogFile -Value "$(Get-Date) Changing Alt Tab Settings in Registry..."
+                New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'AltTabSettings' -Value '1' -Type DWORD –Force > $null
+                Add-Content -Path $LogFile -Value "$(Get-Date) Successfully added Registry Key"
+                ""
+                Write-Host -ForegroundColor Green "(✓) Alt Tab setting changed!"
+
+
+           }
+           catch{
+                ""
+                Write-Host "Error applying gaming tweaks. Please run this script as administrator"
+                Add-Content -Path $LogFile -Value "$(Get-Date) Error: Gaming Tweaks could not be applied. Aborting..."
+               
+           }
+
+            ""
+            Read-Host "Press Enter to continue"
+            StartCode
+            6
         }
     }
  
@@ -179,7 +218,14 @@ Clear-Host
 Add-Type -AssemblyName System.Windows.Forms
 $host.ui.RawUI.WindowTitle = “Dylan's PowerShell Script”
 
-"Welcome $env:UserName and welcome to Dylan's PowerShell Script Version $Version (15.05.2022)"
+"Welcome $env:UserName and welcome to Dylan's PowerShell Script Version $Version ($date)"
+
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+
+    ""
+    Write-Host -ForegroundColor Red "(-) You didn't run this script as administrator, some functions may not work and the script may crash." 
+    ""
+}
 
 #Window Alert
 $msgBoxInput =  [System.Windows.Forms.MessageBox]::Show('!WARNING! This script is still early access, bugs and failures may occur during the execution of the script, would you like to continue?','Dylans PowerShell Script WARNING','YesNoCancel','Error')
@@ -189,7 +235,7 @@ $msgBoxInput =  [System.Windows.Forms.MessageBox]::Show('!WARNING! This script i
   'Yes' {
     Add-Content -Path $LogFile -Value "---------------------------------------------------------------------"
     Add-Content -Path $LogFile -Value "$(Get-Date) Starting Code..."
-    
+
     StartCode
 
 
