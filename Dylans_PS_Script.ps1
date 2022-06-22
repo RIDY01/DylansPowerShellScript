@@ -6,11 +6,147 @@ New-Item -ItemType "file" $HOME"\Documents\Dylanlogs\log.txt" -ErrorAction Silen
 
 #Variables------------------------------------------------------------------------------------
 $LogFile = $HOME + "\Documents\Dylanlogs\log.txt"
-$Version = "1.7"
-$date = "21/06/2022"
+$Version = "1.8"
+$date = "22/06/2022"
 #---------------------------------------------------------------------------------------------
 
 #Functions------------------------------------------------------------------------------------
+  #1
+  function deleteTempFiles{
+        ""
+        "Deleting temp files..."
+        Add-Content -Path $LogFile -Value "$(Get-Date) Deleting \Windows\Temp\ Content..."
+        Remove-Item $windir'\Windows\Temp\*' -Recurse -ErrorAction SilentlyContinue 
+        Add-Content -Path $LogFile -Value "$(Get-Date) Finished Deleting \Windows\Temp\ Content"
+
+
+        Add-Content -Path $LogFile -Value "$(Get-Date) Deleting \AppData\Local\Temp\ Content..."
+        Remove-Item $HOME'\AppData\Local\Temp\*' -Recurse -ErrorAction SilentlyContinue
+        Add-Content -Path $LogFile -Value "$(Get-Date) Finished Deleting \AppData\Local\Temp\ Content"
+    
+        ""
+        Write-Host -ForegroundColor Yellow "(!) This following files cannot be removed:"
+        Get-ChildItem $windir'\Windows\Temp\*'
+        Get-ChildItem $HOME'\AppData\Local\Temp\*'
+        ""
+        "Finished!"
+  }
+
+  #2
+  function checkSusActivities{
+        ""
+        Add-Content -Path $LogFile -Value "$(Get-Date) Checking for suspicious services..."
+        $Test = Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object -Property "Name" | Select-String -pattern "emote" 
+           
+        If ($Test -ne $null)
+        {
+            Write-Host -ForegroundColor Yellow "(!) $Test is suspicious, please check this service"
+            Add-Content -Path $LogFile -Value "$(Get-Date) $Test is suspicious"
+        }
+        Else
+        {
+            Write-Host -ForegroundColor Green "(✓) No suspicious services have been found!"
+            Add-Content -Path $LogFile -Value "$(Get-Date) Suspicious Service check result: 0"
+        }
+        ""
+        "Query user:" 
+        query user /server:$SERVER
+        ""
+        "netstat:" 
+        netstat -b
+  }
+
+  #3
+  function checkPcInfos{
+            ""
+        Add-Content -Path $LogFile -Value "$(Get-Date) Showing up some general information..."
+        "Loading..."
+
+        Get-ComputerInfo 
+        
+        ""
+        Add-Content -Path $LogFile -Value "$(Get-Date) Finished showing up some general information"
+  }
+
+  #4 
+  function configStartUpFolder{
+        ""
+        Add-Content -Path $LogFile -Value "$(Get-Date) Adding files via prompt..."
+        $inputfile = Get-FileName $env:HOMEPATH
+        try {
+            Add-Content -Path $LogFile -Value "$(Get-Date) Copying $inputfile to the Startup folder..."
+            ""
+            "Copying..."
+            ""
+            Copy-Item $inputfile ("$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")
+            ""
+                Write-Host -ForegroundColor Green "(✓) Successfully copied files!"
+                ""
+                $a = Read-Host "Do you want to open the start-up folder? y/n"
+
+                if($a -eq "y" -or $a -eq "yes")
+                {
+                    explorer 'C:\Users\DLIri\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
+                }
+
+        }
+        catch{
+            Add-Content -Path $LogFile -Value "$(Get-Date) An error occured during the process"
+            ""
+            Write-Host -ForegroundColor Red "(-) An error occured during the process, aborting..."
+        }
+        ""
+        Get-ChildItem -Path "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
+  }
+
+  #5
+  function removeCortanaPack{
+        ""
+        Add-Content -Path $LogFile -Value "$(Get-Date) Disabling Cortana..."
+        try{
+                Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppPackage
+                Add-Content -Path $LogFile -Value "$(Get-Date) Removed Cortana"
+                ""
+                Write-Host -ForegroundColor Green "(✓) successfully removed Cortana"
+
+        }
+        catch{
+                Add-Content -Path $LogFile -Value "$(Get-Date) Error: Cortana could not get removed. Aborting..."
+                Write-Host -ForegroundColor Red "(-) Cortana could not get removed. Aborting..."
+        }
+  }
+
+  #6
+  function applyGamingTweaks{
+        ""
+        Add-Content -Path $LogFile -Value "$(Get-Date) Applying Gaming tweaks..."
+        try{
+            ""
+            Write-Host "Registry setting..."
+            Add-Content -Path $LogFile -Value "$(Get-Date) Changing Alt Tab Settings in Registry..."
+            New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'AltTabSettings' -Value '1' -Type DWORD –Force > $null
+            Add-Content -Path $LogFile -Value "$(Get-Date) Successfully added Registry Key"
+            ""
+            Write-Host -ForegroundColor Green "(✓) Alt Tab setting changed!"
+
+
+        }
+        catch{
+            ""
+            Write-Host "Error applying gaming tweaks. Please run this script as administrator"
+            Add-Content -Path $LogFile -Value "$(Get-Date) Error: Gaming Tweaks could not be applied. Aborting..."
+               
+        }
+  }
+
+  function continueCode{
+      ""
+      Read-Host "Press Enter to continue"
+      StartCode
+  }
+  
+  
+  
   function StartCode{
 
     Clear-Host
@@ -22,17 +158,35 @@ $date = "21/06/2022"
       /____/                                                                                             /_/           "
 
       ""
-      "Version: $Version"
+    
+Write-Host -ForegroundColor Yellow  "
+
+=================== infos ====================
+      
+      Version:      $Version ($date)                  
+      Creator:      RIDY01
+      Current User: $env:UserName                         
+      
+=============================================="
+
     ""
-        "1) Delete temp files" 
-        "2) Check for suspicious activities"
-        "3) Some general infos about your PC"
-        "4) Configure Start-up folder"
-        "5) Remove Cortana"
-        "6) Gaming tweaks"
+
+Write-Host -ForegroundColor green "
+=================== Tasks ====================
+
+     1) Delete temp files
+     2) Check for suspicious activities
+     3) Some general infos about your PC
+     4) Configure Start-up folder
+     5) Remove Cortana
+     6) Gaming tweaks
+     7) Flush DNS
+
+=============================================="
+    ""
     ""
     
-    "If you don't enter a number the script will close itself"
+    Write-Host -ForegroundColor red "If you don't enter a number the script will close itself"
     ""
    
     $MenuSelection = Read-Host "Enter a number"
@@ -47,144 +201,33 @@ $date = "21/06/2022"
         } 
 
         1 { 
-            ""
-            "Deleting temp files..."
-            Add-Content -Path $LogFile -Value "$(Get-Date) Deleting \Windows\Temp\ Content..."
-            Remove-Item $windir'\Windows\Temp\*' -Recurse -ErrorAction SilentlyContinue 
-            Add-Content -Path $LogFile -Value "$(Get-Date) Finished Deleting \Windows\Temp\ Content"
-
-
-            Add-Content -Path $LogFile -Value "$(Get-Date) Deleting \AppData\Local\Temp\ Content..."
-            Remove-Item $HOME'\AppData\Local\Temp\*' -Recurse -ErrorAction SilentlyContinue
-            Add-Content -Path $LogFile -Value "$(Get-Date) Finished Deleting \AppData\Local\Temp\ Content"
-    
-            ""
-            Write-Host -ForegroundColor Yellow "(!) This following files cannot be removed:"
-            Get-ChildItem $windir'\Windows\Temp\*'
-            Get-ChildItem $HOME'\AppData\Local\Temp\*'
-            ""
-
-            "Finished!"
-            "" 
-
-            Read-Host "Press Enter to continue"
-            StartCode
+            deleteTempFiles
+            continueCode
         } 
         2 { 
-            ""
-            Add-Content -Path $LogFile -Value "$(Get-Date) Checking for suspicious services..."
-            $Test = Get-Service | Where-Object {$_.Status -eq "Running"} | Select-Object -Property "Name" | Select-String -pattern "emote" 
-           
-            If ($Test -ne $null)
-            {
-                Write-Host -ForegroundColor Yellow "(!) $Test is suspicious, please check this service"
-                Add-Content -Path $LogFile -Value "$(Get-Date) $Test is suspicious"
-            }
-            Else
-            {
-                Write-Host -ForegroundColor Green "(✓) No suspicious services have been found!"
-                Add-Content -Path $LogFile -Value "$(Get-Date) Suspicious Service check result: 0"
-            }
-            ""
-            "Query user:" 
-            query user /server:$SERVER
-            ""
-            "netstat:" 
-            netstat -b
-         
-            ""
-            Read-Host "Press Enter to continue"
-            StartCode
+            checkSusActivities
+            continueCode
         }
         3 { 
-            ""
-            Add-Content -Path $LogFile -Value "$(Get-Date) Showing up some general information..."
-            "Loading..."
-
-            Get-ComputerInfo 
-        
-            ""
-            Add-Content -Path $LogFile -Value "$(Get-Date) Finished showing up some general information"
-            ""
-            Read-Host "Press Enter to continue"
-            StartCode
+            checkPcInfos
+            continueCode
         }
         4 { 
-            ""
-            Add-Content -Path $LogFile -Value "$(Get-Date) Adding files via prompt..."
-            $inputfile = Get-FileName $env:HOMEPATH
-            try {
-                Add-Content -Path $LogFile -Value "$(Get-Date) Copying $inputfile to the Startup folder..."
-                ""
-                "Copying..."
-                ""
-                Copy-Item $inputfile ("$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup")
-                ""
-                 Write-Host -ForegroundColor Green "(✓) Successfully copied files!"
-                 ""
-                 $a = Read-Host "Do you want to open the start-up folder? y/n"
-
-                 if($a -eq "y" -or $a -eq "yes")
-                 {
-                        explorer 'C:\Users\DLIri\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup'
-                 }
-
-            }
-            catch{
-                Add-Content -Path $LogFile -Value "$(Get-Date) An error occured during the process"
-                ""
-                Write-Host -ForegroundColor Red "(-) An error occured during the process, aborting..."
-            }
-            ""
-            Get-ChildItem -Path "$HOME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
-            ""
-            Read-Host "Press Enter to continue"
-            StartCode
+            configStartUpFolder
+            continueCode
         }
         5{
-            ""
-            Add-Content -Path $LogFile -Value "$(Get-Date) Disabling Cortana..."
-            try{
-                    Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppPackage
-                    Add-Content -Path $LogFile -Value "$(Get-Date) Removed Cortana"
-                    ""
-                    Write-Host -ForegroundColor Green "(✓) successfully removed Cortana"
-
-            }
-            catch{
-                    Add-Content -Path $LogFile -Value "$(Get-Date) Error: Cortana could not get removed. Aborting..."
-                    Write-Host -ForegroundColor Red "(-) Cortana could not get removed. Aborting..."
-            }
-                ""
-                Read-Host "Press Enter to continue"
-                StartCode
+            removeCortanaPack
+            continueCode
         
         }
         6{
-           ""
-           Add-Content -Path $LogFile -Value "$(Get-Date) Applying Gaming tweaks..."
-           try{
-                ""
-                Write-Host "Registry setting..."
-                Add-Content -Path $LogFile -Value "$(Get-Date) Changing Alt Tab Settings in Registry..."
-                New-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'AltTabSettings' -Value '1' -Type DWORD –Force > $null
-                Add-Content -Path $LogFile -Value "$(Get-Date) Successfully added Registry Key"
-                ""
-                Write-Host -ForegroundColor Green "(✓) Alt Tab setting changed!"
-
-
-           }
-           catch{
-                ""
-                Write-Host "Error applying gaming tweaks. Please run this script as administrator"
-                Add-Content -Path $LogFile -Value "$(Get-Date) Error: Gaming Tweaks could not be applied. Aborting..."
-               
-           }
-
-            ""
-            Read-Host "Press Enter to continue"
-            StartCode
-            6
+            applyGamingTweaks
+            continueCode
+        }
+        7{
+            ipconfig /flushdns
+            continueCode
         }
     }
  
